@@ -1,0 +1,42 @@
+{
+    "en": {
+        "Text1": "[Info] Initialized completed.",
+        "Text2": "[Info] Minecraft handle captured!",
+        "Text3": "[Exit] Game is not running.",
+        "Text4": "[Error] Game window is too small. Resize the window a little bit bigger.",
+        "Text5": "[Error] Template matching failed.",
+        "Text6": "[Error] An unexpected error occurred.",
+        "Text7": "[Info] Cannot find the Minecraft process. Continue to search the game process...",
+        "Text8": "[Info] Detected! - Total: ",
+        "Text9": "Press enter to exit...",
+        "Text10": "Setting",
+        "Text11": "Image File: ",
+        "Text12": "Language: ",
+        "Text13": "Delay: ",
+        "Text14": "Threshold: ",
+        "Text15": "Preview Mode: ",
+        "Text16": "Always displaying the preview window.",
+        "Text17": "Display only when fishing is detected.",
+        "Text18": "Never display the preview window."
+    },
+    "ko": {
+        "Text1": "[정보] 초기화 완료.",
+        "Text2": "[정보] 마인크래프트가 감지되었습니다.",
+        "Text3": "[종료] 게임이 실행되고 있지 않습니다.",
+        "Text4": "[오류] 게임 창이 너무 작습니다. 창 크기를 조금 더 크게 조정하십시오.",
+        "Text5": "[오류] 이미지 감지에 실패하였습니다.",
+        "Text6": "[오류] 예상치 못한 오류가 발생했습니다.",
+        "Text7": "[정보] 마인크래프트 프로세스를 찾을 수 없습니다. 계속해서 게임 프로세스를 검색합니다...",
+        "Text8": "[정보] 감지되었습니다! - 총합: ",
+        "Text9": "종료하려면 Enter 키를 누르세요 ...",
+        "Text10": "설정",
+        "Text11": "이미지 파일: ",
+        "Text12": "언어: ",
+        "Text13": "딜레이: ",
+        "Text14": "정확도: ",
+        "Text15": "프리뷰 모드: ",
+        "Text16": "항상 미리보기 창을 표시합니다.",
+        "Text17": "낚시가 감지 된 경우에만 표시됩니다.",
+        "Text18": "미리보기 창을 표시하지 않습니다."
+    }
+}
