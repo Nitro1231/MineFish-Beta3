@@ -13,8 +13,9 @@
 #
 
 # TODO:
-# Add Preview Mode Method.
-# Add auto update method.
+# ✔ Add Preview Mode Method.
+# Validate the config file.
+# Add update check method.
 # Add easy setting setup or auto setting detection function.
 # Reorganize and optimize the code.
 
@@ -28,6 +29,7 @@ import configparser
 import numpy as np
 import pygetwindow as gw
 
+# region Basic Info
 # Print basic information.
 print(",--.   ,--.,--.               ,------.,--.       ,--.         ,--.   ,--.,----.  \n|   `.'   |`--',--,--,  ,---. |  .---'`--' ,---. |  ,---.      \  `.'  / '.-.  | \n|  |'.'|  |,--.|      \| .-. :|  `--, ,--.(  .-' |  .-.  |      \     /    .' <  \n|  |   |  ||  ||  ||  |\   --.|  |`   |  |.-'  `)|  | |  |       \   /   /'-'  | \n`--'   `--'`--'`--''--' `----'`--'    `--'`----' `--' `--'        `-'    `----'  ")
 print(f'{"=" * 10}Info{"=" * 10}')
@@ -36,7 +38,9 @@ print('Email: admin@nitrostudio.dev')
 print('Blog: http://blog.nitrostudio.dev/')
 print('Discord: Nitro#1781\n')
 print('Build: 3.0.1\n')
+# endregion
 
+# region Config and Initialization
 # Read config file.
 config = configparser.ConfigParser()
 config.read('./config.ini')
@@ -71,8 +75,11 @@ print(f'{langData["Text15"]}{preview} ({previewD})') # Preview Mode:
 target = cv2.imread(textImage)
 target = cv2.cvtColor(target, cv2.COLOR_BGR2GRAY)
 
+vaild = True
+
 print()
 print(langData['Text1']) # [Info] Initialized completed.
+# endregion
 
 def getHandle():
     """
@@ -116,8 +123,11 @@ def detectImage(handle):
     try:
         # Capture the Game window.
         imageOriginal = np.array(pyautogui.screenshot(region=p1+p2))
-        cv2.imshow('Preview', imageOriginal) # ===================================
-        cv2.waitKey(1)
+        if preview == 0:
+            cv2.imshow('Preview', imageOriginal)
+            cv2.waitKey(1)
+        else:
+            cv2.destroyAllWindows()
 
         image = cv2.cvtColor(imageOriginal, cv2.COLOR_BGR2GRAY)
         
@@ -133,6 +143,7 @@ def detectImage(handle):
             except Exception as e:
                 if '_img.size().height' in str(e):
                     print(langData['Text4']) # [Error] Game window is too small. Resize the window a little bit bigger.
+                    time.sleep(1)
                     return False
                 else:
                     # Unknown error handling.
@@ -146,9 +157,12 @@ def detectImage(handle):
         if loc and len(list(zip(*loc[::-1]))) > 0:
             for pt in zip(*loc[::-1]):
                 # Draw a rectangle on the detected area.
-                cv2.rectangle(imageOriginal, pt, (pt[0] + w, pt[1] + h), (0,0,255), 2)
-                cv2.imshow('Preview', imageOriginal)
-                cv2.waitKey(1)
+                if preview != 2:
+                    cv2.rectangle(imageOriginal, pt, (pt[0] + w, pt[1] + h), (0,0,255), 2)
+                    cv2.imshow('Preview', imageOriginal)
+                    cv2.waitKey(1)
+                else:
+                    cv2.destroyAllWindows()
                 return True
 
     except Exception as e:
@@ -160,12 +174,11 @@ def detectImage(handle):
 
 # Main Run
 total = 1
-
 handle = getHandle()
 if handle is False:
     print(langData['Text7']) # [Info] Cannot find the Minecraft process. Continue to search the game processor...
 
-while True:
+while vaild:
     if handle is not False:
         capture = detectImage(handle)
         if capture is None:
