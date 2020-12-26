@@ -14,11 +14,12 @@
 
 # TODO:
 # ✔ Add Preview Mode Method.
-# Validate the config file.
+# ✔ Validate the config file.
 # Add update check method.
 # Add easy setting setup or auto setting detection function.
 # Reorganize and optimize the code.
 
+import os
 import sys
 import cv2
 import time
@@ -42,18 +43,60 @@ print('Build: 3.0.1\n')
 
 # region Config and Initialization
 # Read config file.
-config = configparser.ConfigParser()
-config.read('./config.ini')
-textImage = f'./Core/img/{config.get("MineFishV3 Setting", "image").strip()}'
-langType = config.get('MineFishV3 Setting', 'language')
-delay = float(config.get('MineFishV3 Setting', 'delay'))
-accuracy = float(config.get('MineFishV3 Setting', 'accuracy'))
-preview = int(config.get('MineFishV3 Setting', 'preview'))
+if (os.path.exists('./config.ini')):
+    config = configparser.ConfigParser()
+    config.read('./config.ini', encoding='utf-8')
+    textImage = f'./Core/img/{config.get("MineFishV3 Setting", "image").strip()}'
+    langType = config.get('MineFishV3 Setting', 'language')
 
-# Read language file.
-with open('./Core/Language.json', encoding='utf-8') as f:
-    lang = json.load(f)
-langData = lang[langType]
+    # Read language file.
+    if (os.path.exists('./Core/Language.json')):
+        with open('./Core/Language.json', encoding='utf-8') as f:
+            lang = json.load(f)
+        try:
+            langData = lang[langType]
+        except:
+            print(f'[Error] Language "{langType}" is currently not available.')
+            print('Supportive languages are listed below:')
+            for key in lang.keys():
+                print(key)
+            exit()
+    else:
+        print('[Error] The language file is missing, please re-download the software here: https://github.com/Nitro1231/MineFish-V3/releases')
+        exit()
+
+    if (not os.path.exists(textImage)):
+        print(langData['Text19']) # [Error] The image file does not exist. Please check if the image file exists in the "./Core/img" folder.
+        quit()
+
+    try:
+        delay = float(config.get('MineFishV3 Setting', 'delay'))
+        accuracy = float(config.get('MineFishV3 Setting', 'accuracy')) # 0.5 < accuracy < 1
+        preview = int(config.get('MineFishV3 Setting', 'preview')) # 0 <= preview <= 2
+    except Exception as e:
+        print(f'{langData["Text20"]}\n') # [Error] One of the config file variables is not correct. Please check if the delay and accuracy variable is in form of float, and check if the preview variable is in form of an integer.
+        print(e)
+        quit()
+
+    if (not(accuracy < 1 and accuracy > 0.5)):
+        print(langData['Text21']) # [Error] The accuracy variable must be in the range between 0.5 and 1.0.
+        quit()
+
+    if (not(preview >= 0 and preview <= 2)):
+        print(langData['Text22']) # [Error] The preview variable must be 0, 1, or 2. The meaning of each number is as below:
+        print(f'0. {langData["Text16"]}')
+        print(f'1. {langData["Text17"]}')
+        print(f'2. {langData["Text18"]}')
+        quit()
+
+    if delay <= 0:
+        print(langData['Text23']) # [Error] The delay variable must be a positive number.
+        quit()
+    elif delay >= 1:
+        print(langData['Text24']) # [Warning] Delay is too long. This might make this program hard to detect fishing status. Please keep the delay under 1 second.
+else:
+    print('[Error] The config file is missing, please re-download the software here: https://github.com/Nitro1231/MineFish-V3/releases')
+    quit()
 
 # Load a description for preview mode.
 if preview == 1:
@@ -74,8 +117,6 @@ print(f'{langData["Text15"]}{preview} ({previewD})') # Preview Mode:
 # Load the target image and convert it into grayscale.
 target = cv2.imread(textImage)
 target = cv2.cvtColor(target, cv2.COLOR_BGR2GRAY)
-
-vaild = True
 
 print()
 print(langData['Text1']) # [Info] Initialized completed.
@@ -178,7 +219,7 @@ handle = getHandle()
 if handle is False:
     print(langData['Text7']) # [Info] Cannot find the Minecraft process. Continue to search the game processor...
 
-while vaild:
+while True:
     if handle is not False:
         capture = detectImage(handle)
         if capture is None:
