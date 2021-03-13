@@ -15,7 +15,7 @@
 # TODO:
 # ✔ Add Preview Mode Method.
 # ✔ Validate the config file.
-# Add update check method.
+# ✔ Add update check method.
 # Add easy setting setup or auto setting detection function.
 # Reorganize and optimize the code.
 
@@ -23,8 +23,9 @@ import os
 import sys
 import cv2
 import time
-import imutils
 import json
+import imutils
+import requests
 import pyautogui
 import configparser
 import numpy as np
@@ -127,6 +128,13 @@ print(f'{langData["Text15"]}{preview} ({previewD})')  # Preview Mode:
 # Load the target image and convert it into grayscale.
 target = cv2.imread(textImage)
 target = cv2.cvtColor(target, cv2.COLOR_BGR2GRAY)
+
+# Check if there is any other version available
+req  = requests.get('https://raw.githubusercontent.com/Nitro1231/MineFish-V3/main/ver.txt')
+latestVersion = req.text.strip()
+if (not (req.status_code == 200 and ver == latestVersion)):
+    print()
+    print(langData['Text25'])
 
 print()
 print(langData['Text1'])  # [Info] Initialized completed.
