@@ -30,6 +30,8 @@ import configparser
 import numpy as np
 import pygetwindow as gw
 
+ver = '3.0.1'
+
 # region Basic Info
 # Print basic information.
 print(",--.   ,--.,--.               ,------.,--.       ,--.         ,--.   ,--.,----.  \n|   `.'   |`--',--,--,  ,---. |  .---'`--' ,---. |  ,---.      \  `.'  / '.-.  | \n|  |'.'|  |,--.|      \| .-. :|  `--, ,--.(  .-' |  .-.  |      \     /    .' <  \n|  |   |  ||  ||  ||  |\   --.|  |`   |  |.-'  `)|  | |  |       \   /   /'-'  | \n`--'   `--'`--'`--''--' `----'`--'    `--'`----' `--' `--'        `-'    `----'  ")
@@ -38,7 +40,7 @@ print('Developer: Nitro')
 print('Email: admin@nitrostudio.dev')
 print('Blog: http://blog.nitrostudio.dev/')
 print('Discord: Nitro#1781\n')
-print('Build: 3.0.1\n')
+print(f'Build: {ver}\n')
 # endregion
 
 # region Config and Initialization
@@ -66,61 +68,70 @@ if (os.path.exists('./config.ini')):
         exit()
 
     if (not os.path.exists(textImage)):
-        print(langData['Text19']) # [Error] The image file does not exist. Please check if the image file exists in the "./Core/img" folder.
+        # [Error] The image file does not exist. Please check if the image file exists in the "./Core/img" folder.
+        print(langData['Text19'])
         quit()
 
     try:
         delay = float(config.get('MineFishV3 Setting', 'delay'))
-        accuracy = float(config.get('MineFishV3 Setting', 'accuracy')) # 0.5 < accuracy < 1
-        preview = int(config.get('MineFishV3 Setting', 'preview')) # 0 <= preview <= 2
+        # 0.5 < accuracy < 1
+        accuracy = float(config.get('MineFishV3 Setting', 'accuracy'))
+        # 0 <= preview <= 2
+        preview = int(config.get('MineFishV3 Setting', 'preview'))
     except Exception as e:
-        print(f'{langData["Text20"]}\n') # [Error] One of the config file variables is not correct. Please check if the delay and accuracy variable is in form of float, and check if the preview variable is in form of an integer.
+        # [Error] One of the config file variables is not correct. Please check if the delay and accuracy variable is in form of float, and check if the preview variable is in form of an integer.
+        print(f'{langData["Text20"]}\n')
         print(e)
         quit()
 
     if (not(accuracy < 1 and accuracy > 0.5)):
-        print(langData['Text21']) # [Error] The accuracy variable must be in the range between 0.5 and 1.0.
+        # [Error] The accuracy variable must be in the range between 0.5 and 1.0.
+        print(langData['Text21'])
         quit()
 
     if (not(preview >= 0 and preview <= 2)):
-        print(langData['Text22']) # [Error] The preview variable must be 0, 1, or 2. The meaning of each number is as below:
+        # [Error] The preview variable must be 0, 1, or 2. The meaning of each number is as below:
+        print(langData['Text22'])
         print(f'0. {langData["Text16"]}')
         print(f'1. {langData["Text17"]}')
         print(f'2. {langData["Text18"]}')
         quit()
 
     if delay <= 0:
-        print(langData['Text23']) # [Error] The delay variable must be a positive number.
+        # [Error] The delay variable must be a positive number.
+        print(langData['Text23'])
         quit()
     elif delay >= 1:
-        print(langData['Text24']) # [Warning] Delay is too long. This might make this program hard to detect fishing status. Please keep the delay under 1 second.
+        # [Warning] Delay is too long. This might make this program hard to detect fishing status. Please keep the delay under 1 second.
+        print(langData['Text24'])
 else:
     print('[Error] The config file is missing, please re-download the software here: https://github.com/Nitro1231/MineFish-V3/releases')
     quit()
 
 # Load a description for preview mode.
 if preview == 1:
-    previewD = langData["Text17"]
+    previewD = langData['Text17']
 elif preview == 2:
-    previewD = langData["Text18"]
+    previewD = langData['Text18']
 else:
-    previewD = langData["Text16"]
+    previewD = langData['Text16']
 
 # Print the current setting.
-print(f'{"=" * 10}{langData["Text10"]}{"=" * 10}') # Setting
-print(f'{langData["Text11"]}\"{textImage}\"') # Image File: 
-print(f'{langData["Text12"]}{langType}') # Language: 
-print(f'{langData["Text13"]}{delay}') # Delay: 
-print(f'{langData["Text14"]}{accuracy}') # Threshold: 
-print(f'{langData["Text15"]}{preview} ({previewD})') # Preview Mode: 
+print(f'{"=" * 10}{langData["Text10"]}{"=" * 10}')  # Setting
+print(f'{langData["Text11"]}\"{textImage}\"')  # Image File:
+print(f'{langData["Text12"]}{langType}')  # Language:
+print(f'{langData["Text13"]}{delay}')  # Delay:
+print(f'{langData["Text14"]}{accuracy}')  # Threshold:
+print(f'{langData["Text15"]}{preview} ({previewD})')  # Preview Mode:
 
 # Load the target image and convert it into grayscale.
 target = cv2.imread(textImage)
 target = cv2.cvtColor(target, cv2.COLOR_BGR2GRAY)
 
 print()
-print(langData['Text1']) # [Info] Initialized completed.
+print(langData['Text1'])  # [Info] Initialized completed.
 # endregion
+
 
 def getHandle():
     """
@@ -136,9 +147,11 @@ def getHandle():
     for t in titles:
         if 'Minecraft' in t and 'Launcher' not in t:
             handle = gw.getWindowsWithTitle(t)
-            print(f'{langData["Text2"]} ({t}, Handle: {handle[0]._hWnd})') # [Info] Minecraft handle captured!
+            # [Info] Minecraft handle captured!
+            print(f'{langData["Text2"]} ({t}, Handle: {handle[0]._hWnd})')
             return handle[0]
     return False
+
 
 def detectImage(handle):
     """
@@ -152,7 +165,7 @@ def detectImage(handle):
     try:
         x1, y1, x2, y2 = handle._getWindowRect()
     except:
-        print(langData['Text3']) # [Exit] Game is not running.
+        print(langData['Text3'])  # [Exit] Game is not running.
         return None
 
     # Calculate the optimized capturing area for better performance.
@@ -171,35 +184,38 @@ def detectImage(handle):
             cv2.destroyAllWindows()
 
         image = cv2.cvtColor(imageOriginal, cv2.COLOR_BGR2GRAY)
-        
+
         # Do image matching by using multi-scale target sample image and actual captured game image.
         loc = False
         w, h = target.shape[::-1]
         for scale in np.linspace(0.8, 2.0, 30)[::-1]:
             # Resizing
-            resized = imutils.resize(target, width = int(target.shape[1] * scale))
+            resized = imutils.resize(
+                target, width=int(target.shape[1] * scale))
             w, h = resized.shape[::-1]
             try:
                 res = cv2.matchTemplate(image, resized, cv2.TM_CCOEFF_NORMED)
             except Exception as e:
                 if '_img.size().height' in str(e):
-                    print(langData['Text4']) # [Error] Game window is too small. Resize the window a little bit bigger.
+                    # [Error] Game window is too small. Resize the window a little bit bigger.
+                    print(langData['Text4'])
                     time.sleep(1)
                     return False
                 else:
                     # Unknown error handling.
-                    print(langData['Text5']) # [Error] Template matching failed.
+                    # [Error] Template matching failed.
+                    print(langData['Text5'])
                     print(e)
                     return None
             loc = np.where(res >= accuracy)
             if len(list(zip(*loc[::-1]))) > 0:
-                break # Image detected.
+                break  # Image detected.
 
         if loc and len(list(zip(*loc[::-1]))) > 0:
             for pt in zip(*loc[::-1]):
                 # Draw a rectangle on the detected area.
                 if preview != 2:
-                    cv2.rectangle(imageOriginal, pt, (pt[0] + w, pt[1] + h), (0,0,255), 2)
+                    cv2.rectangle(imageOriginal, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
                     cv2.imshow('Preview', imageOriginal)
                     cv2.waitKey(1)
                 else:
@@ -208,16 +224,18 @@ def detectImage(handle):
 
     except Exception as e:
         # Unknown error handling.
-        print(langData['Text6']) # [Error] An unexpected error occurred.
+        print(langData['Text6'])  # [Error] An unexpected error occurred.
         print(e)
         return None
     return False
+
 
 # Main Run
 total = 1
 handle = getHandle()
 if handle is False:
-    print(langData['Text7']) # [Info] Cannot find the Minecraft process. Continue to search the game processor...
+    # [Info] Cannot find the Minecraft process. Continue to search the game processor...
+    print(langData['Text7'])
 
 while True:
     if handle is not False:
@@ -226,7 +244,7 @@ while True:
             break
 
         if capture:
-            print(f'{langData["Text8"]}{total}') # [Info] Detected! - Total: 
+            print(f'{langData["Text8"]}{total}')  # [Info] Detected! - Total:
             total += 1
             pyautogui.click(button='right')
             time.sleep(0.5)
@@ -238,4 +256,4 @@ while True:
         handle = getHandle()
 
 cv2.destroyAllWindows()
-input(langData['Text9']) # Press enter to exit...
+input(langData['Text9'])  # Press enter to exit...
