@@ -16,7 +16,8 @@
 # ✔ Add Preview Mode Method.
 # ✔ Validate the config file.
 # ✔ Add update check method.
-# ✔ Reorganize and optimize the code.
+# Add easy setting setup or auto setting detection function.
+# Reorganize and optimize the code.
 
 import os
 import sys
@@ -53,7 +54,28 @@ def ex():
 if (os.path.exists('./config.ini')):
     config = configparser.ConfigParser()
     config.read('./config.ini', encoding='utf-8')
-    textImage = f'./Core/img/{config.get("MineFishV3 Setting", "image").strip()}'
+
+    # Text Image
+    textImage = config.get("MineFishV3 Setting", "image").strip()
+
+    vaildImage = False
+    imgList = []
+    for image in os.listdir('./Core/img'):
+        imgList.append(image)
+        if textImage.strip() == image:
+            vaildImage = True
+
+    if vaildImage == False:
+        print(f'[Warning] Invalid image file name ({textImage}) detected. Please choose one from the list:')
+        for image in imgList:
+            print(image)
+        print()
+        textImage = input('Type one of the name that listed above: ')
+        print()
+
+    textImage = f'./Core/img/{textImage}'
+
+    # Language
     langType = config.get('MineFishV3 Setting', 'language')
 
     # Read language file.
