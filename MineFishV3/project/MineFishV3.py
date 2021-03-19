@@ -16,7 +16,8 @@
 # ✔ Add Preview Mode Method.
 # ✔ Validate the config file.
 # ✔ Add update check method.
-# Add easy setting setup or auto setting detection function.
+# ✔ Add easy setting setup or auto setting detection function.
+# Add the method that tracks and writes the terminal outputs for future feedback and error tracing.
 # Reorganize and optimize the code.
 
 import os
@@ -33,6 +34,7 @@ import numpy as np
 import pygetwindow as gw
 
 ver = '3.0.1'
+# sys.stdout = open('./Debug Log.txt', 'w')
 
 # region Basic Info
 # Print basic information.
@@ -45,59 +47,82 @@ print('Discord: Nitro#1781\n')
 print(f'Build: {ver}\n')
 # endregion
 
+
 def ex():
-    input()
+    input('Press enter to exit...')
+    # sys.stdout.close()
     quit()
+
 
 # region Config and Initialization
 # Read config file.
-if (os.path.exists('./config.ini')):
+configFile = './config.ini'
+if (os.path.exists(configFile)):
     config = configparser.ConfigParser()
-    config.read('./config.ini', encoding='utf-8')
+    config.read(configFile, encoding='utf-8')
 
-    # Text Image
-    textImage = config.get("MineFishV3 Setting", "image").strip()
-
-    vaildImage = False
-    imgList = []
-    for image in os.listdir('./Core/img'):
-        imgList.append(image)
-        if textImage.strip() == image:
-            vaildImage = True
-
-    if vaildImage == False:
-        print(f'[Warning] Invalid image file name ({textImage}) detected. Please choose one from the list:')
-        for image in imgList:
-            print(image)
-        print()
-        textImage = input('Type one of the name that listed above: ')
-        print()
-
-    textImage = f'./Core/img/{textImage}'
-
-    # Language
-    langType = config.get('MineFishV3 Setting', 'language')
-
+    # region User config setup
     # Read language file.
     if (os.path.exists('./Core/Language.json')):
         with open('./Core/Language.json', encoding='utf-8') as f:
             lang = json.load(f)
-        try:
-            langData = lang[langType]
-        except:
-            print(f'[Error] Language "{langType}" is currently not available.')
-            print('Supportive languages are listed below:')
-            for key in lang.keys():
-                print(key)
-            ex()
+
+        isVaildLang = False
+        langType = config.get('MineFishV3 Setting', 'language')
+        while(isVaildLang == False):
+            try:
+                langData = lang[langType]
+                config.set('MineFishV3 Setting', 'language', langType)
+                isVaildLang = True
+            except:
+                # Invalid config value. Give users the possible options and ask them to manually set the value.
+                print(f'[Error] Language "{langType}" is currently not available.')
+                print('Supportive languages are listed below:')
+                for key in lang.keys():
+                    print(key)
+
+                print()
+                langType = input('Type one of the language that listed above: ')
+                print()
     else:
         print('[Error] The language file is missing, please re-download the software here: https://github.com/Nitro1231/MineFish-V3/releases')
         ex()
 
+    # Text Image
+    isVaildImage = False
+    textImage = config.get('MineFishV3 Setting', 'image').strip()
+    while(isVaildImage == False):
+        imgList = []
+        for image in os.listdir('./Core/img'):
+            imgList.append(image)
+            if textImage.strip() == image:
+                config.set('MineFishV3 Setting', 'image', image)
+                isVaildImage = True
+
+        # No files in the image folder. Pretend that there is a file and throw an error after escaping the loop.
+        if len(imgList) <= 0:
+            isVaildImage = True
+
+        if isVaildImage == False:
+            # Invalid config value. Give users the possible options and ask them to manually set the value.
+            # "[Error] Invalid image file name detected. Please choose one from the list:"
+            print(langData['Text26'])
+            for image in imgList:
+                print(image)
+            print()
+            # "Type one of the file name that listed above: "
+            textImage = input(langData['Text27']).strip()
+            print()
+    textImage = f'./Core/img/{textImage}'
+
     if (not os.path.exists(textImage)):
-        # [Error] The image file does not exist. Please check if the image file exists in the "./Core/img" folder.
+        # "[Error] The image file does not exist. Please check if the image file exists in the "./Core/img" folder."
         print(langData['Text19'])
         ex()
+
+    # Save changes
+    config.write(open(configFile, 'w'))
+    # endregion
 
     try:
         delay = float(config.get('MineFishV3 Setting', 'delay'))
@@ -156,7 +181,7 @@ target = cv2.imread(textImage)
 target = cv2.cvtColor(target, cv2.COLOR_BGR2GRAY)
 
 # Check if there is any other version available
-req  = requests.get('https://raw.githubusercontent.com/Nitro1231/MineFish-V3/main/ver.txt')
+req = requests.get('https://raw.githubusercontent.com/Nitro1231/MineFish-V3/main/ver.txt')
 latestVersion = req.text.strip()
 if (not (req.status_code == 200 and ver == latestVersion)):
     print()
@@ -181,7 +206,7 @@ def getHandle():
     for t in titles:
         if 'Minecraft' in t and 'Launcher' not in t:
             handle = gw.getWindowsWithTitle(t)
-            # [Info] Minecraft handle captured!
+            # "[Info] Minecraft handle captured!""
             print(f'{langData["Text2"]} ({t}, Handle: {handle[0]._hWnd})')
             return handle[0]
     return False
@@ -199,7 +224,7 @@ def detectImage(handle):
     try:
         x1, y1, x2, y2 = handle._getWindowRect()
     except:
-        print(langData['Text3'])  # [Exit] Game is not running.
+        print(langData['Text3'])  # "[Exit] Game is not running."
         return None
 
     # Calculate the optimized capturing area for better performance.
@@ -231,13 +256,16 @@ def detectImage(handle):
                 res = cv2.matchTemplate(image, resized, cv2.TM_CCOEFF_NORMED)
             except Exception as e:
                 if '_img.size().height' in str(e):
-                    # [Error] Game window is too small. Resize the window a little bit bigger.
+                    # TODO:
+                    # "[Error] Game window is too small. Resize the window a little bit bigger."
+                    # You will see this text almost every single time when you start Minecraft unless you change the initial window size to something else.
+                    # So... Let's find a way that can automatically adjust the image size that will not go over the actual window size.
                     print(langData['Text4'])
                     time.sleep(1)
                     return False
                 else:
                     # Unknown error handling.
-                    # [Error] Template matching failed.
+                    # "[Error] Template matching failed."
                     print(langData['Text5'])
                     print(e)
                     return None
@@ -258,7 +286,7 @@ def detectImage(handle):
 
     except Exception as e:
         # Unknown error handling.
-        print(langData['Text6'])  # [Error] An unexpected error occurred.
+        print(langData['Text6'])  # "[Error] An unexpected error occurred."
         print(e)
         return None
     return False
@@ -268,7 +296,7 @@ def detectImage(handle):
 total = 1
 handle = getHandle()
 if handle is False:
-    # [Info] Cannot find the Minecraft process. Continue to search the game processor...
+    # "[Info] Cannot find the Minecraft process. Continue to search the game processor..."
     print(langData['Text7'])
 
 while True:
@@ -278,7 +306,7 @@ while True:
             break
 
         if capture:
-            print(f'{langData["Text8"]}{total}')  # [Info] Detected! - Total:
+            print(f'{langData["Text8"]}{total}')  # "[Info] Detected! - Total: "
             total += 1
             pyautogui.click(button='right')
             time.sleep(0.5)
@@ -290,5 +318,4 @@ while True:
         handle = getHandle()
 
 cv2.destroyAllWindows()
-input(langData['Text9'])  # Press enter to exit...
 ex()

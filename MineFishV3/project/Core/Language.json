@@ -24,7 +24,9 @@
         "Text22": "[Error] The preview variable must be 0, 1, or 2. The meaning of each number is as below:",
         "Text23": "[Error] The delay variable must be a positive number.",
         "Text24": "[Warning] Delay is too long. This might make this program hard to detect fishing status. Please keep the delay under 1 second.",
-        "Text25": "[Info] There is a new update available, please visit here to download: https://github.com/Nitro1231/MineFish-V3/releases"
+        "Text25": "[Info] There is a new update available, please visit here to download: https://github.com/Nitro1231/MineFish-V3/releases",
+        "Text26": "[Error] Invalid image file name detected. Please choose one from the list: ",
+        "Text27": "Type one of the file name that listed above: "
     },
     "ko": {
         "Text1": "[정보] 초기화 완료.",
@@ -51,6 +53,8 @@
         "Text22": "[오류] 미리보기 변수는 0, 1 또는 2 여야합니다. 각 숫자의 의미는 다음과 같습니다.",
         "Text23": "[오류] 딜레이 값은 양수여야 합니다.",
         "Text24": "[경고] 딜레이 값이 너무 깁니다. 프로그램이 낚시 상태를 감지하기 어려울 수 있습니다. 딜레이 값을 1초 미만으로 유지하십시요.",
-        "Text25": "[정보] 사용 가능한 새 업데이트가 있습니다. 다음을 방문하여 다운로드하십시오. (https://github.com/Nitro1231/MineFish-V3/releases)"
+        "Text25": "[정보] 사용 가능한 새 업데이트가 있습니다. 다음을 방문하여 다운로드하십시오. (https://github.com/Nitro1231/MineFish-V3/releases)",
+        "Text26": "[오류] 잘못된 이미지 파일 이름이 감지되었습니다. 다음 목록에서 하나를 선택하십시오: ",
+        "Text27": "위에 나열된 파일 이름 중 하나를 입력하십시오: "
     }
 }
