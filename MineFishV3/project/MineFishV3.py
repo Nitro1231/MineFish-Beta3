@@ -21,7 +21,6 @@
 # Reorganize and optimize the code.
 
 import os
-import sys
 import cv2
 import time
 import json
@@ -170,15 +169,11 @@ else:
 
 # Print the current setting.
 print(f'{"=" * 10}{langData["Text10"]}{"=" * 10}')  # Setting
-print(f'{langData["Text11"]}\"{textImage}\"')  # Image File:
+print(f'{langData["Text11"]}"{textImage}"')  # Image File:
 print(f'{langData["Text12"]}{langType}')  # Language:
 print(f'{langData["Text13"]}{delay}')  # Delay:
 print(f'{langData["Text14"]}{accuracy}')  # Threshold:
 print(f'{langData["Text15"]}{preview} ({previewD})')  # Preview Mode:
-
-# Load the target image and convert it into grayscale.
-target = cv2.imread(textImage)
-target = cv2.cvtColor(target, cv2.COLOR_BGR2GRAY)
 
 # Check if there is any other version available
 req = requests.get('https://raw.githubusercontent.com/Nitro1231/MineFish-V3/main/ver.txt')
@@ -186,6 +181,10 @@ latestVersion = req.text.strip()
 if (not (req.status_code == 200 and ver == latestVersion)):
     print()
     print(langData['Text25'])
+
+# Load the target image and convert it into grayscale.
+target = cv2.imread(textImage)
+target = cv2.cvtColor(target, cv2.COLOR_BGR2GRAY)
 
 print()
 print(langData['Text1'])  # [Info] Initialized completed.
